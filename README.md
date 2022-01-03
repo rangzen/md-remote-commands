@@ -5,7 +5,7 @@ Utility tool to expose through a web server some commands defined in a Markdown 
 ## Installation
 
 ```shell
-go install github.com/rangzen/md-remote-commands
+go install github.com/rangzen/md-remote-commands/cmd/mdrc@latest
 ```
 
 ## Usage
