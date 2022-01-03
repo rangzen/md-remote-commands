@@ -1,6 +1,6 @@
 # Markdown Remote Commands (mdrc)
 
-Utility tools to expose through a web server some commands defined in a Markdown file.
+Utility tool to expose through a web server some commands defined in a Markdown file.
 
 ## Installation
 
