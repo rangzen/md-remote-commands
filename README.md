@@ -2,6 +2,8 @@
 
 Utility tool to expose through a web server some commands defined in a Markdown file.
 
+It's like a readonly [Jupyter Notebook](https://jupyter.org/) but in [Go](https://go.dev/) and for Shell.
+
 ## Installation
 
 ```shell
