@@ -29,6 +29,10 @@ import (
 )
 
 const (
+	mdrcCodeBlockIdentifier = "mdrc"
+)
+
+const (
 	head = `
 <head>
 	<title>Markdown Remote Commands</title>
@@ -93,7 +97,7 @@ func (h *HTML) renderShellCodeBlock() func(w io.Writer, node ast.Node, entering 
 		}
 		codeBlock := node.(*ast.CodeBlock)
 		original.CodeBlock(w, codeBlock)
-		if bytes.Equal(codeBlock.Info, []byte("mdrc")) {
+		if bytes.Equal(codeBlock.Info, []byte(mdrcCodeBlockIdentifier)) {
 			_, err := w.Write(
 				[]byte(
 					fmt.Sprintf(
