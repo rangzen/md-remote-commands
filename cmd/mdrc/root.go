@@ -28,26 +28,60 @@ import (
 	"go.uber.org/zap"
 )
 
+const defaultMarkdown = `# Welcome in [mdrc](https://github.com/rangzen/md-remote-commands)
+
+This is the default Markdown text because you run ` + "`mdrc`" + ` without argument.
+
+If you need Markdown example files, you can use the commands below.  
+Click on the run button and re-run mdrc with the downloaded file.
+
+Thank you for using this tool!
+
+## Learn the ` + "`ls`" + ` command
+
+` + "```mdrc" + `
+curl -o learn-ls.md https://raw.githubusercontent.com/rangzen/md-remote-commands/main/examples/learn-ls.md
+` + "```" + `
+
+then re-run mdrc with the file:
+` + "`mdrc learn-ls`" + `
+
+## System commands
+` + "```mdrc" + `
+curl -o system.md https://raw.githubusercontent.com/rangzen/md-remote-commands/main/examples/system.md
+` + "```" + `
+
+then re-run mdrc with the file:
+` + "`mdrc learn-ls`" + `
+`
+
 var port string
 
 var rootCmd = &cobra.Command{
 	Use:   "mdrc [flags] file.md",
 	Short: "Remote commands in Markdown",
 	Long:  `Remote commands in Markdown with web GUI.`,
-	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		App(args[0])
+		App(args)
 	},
 }
 
-func App(filepath string) {
+func App(args []string) {
 	log := configureLogger()
 
-	log.Info("reading...", "file", filepath)
-	data, err := ioutil.ReadFile(filepath)
-	if err != nil {
-		log.Error(err, "unable to read markdown")
-		return
+	var data []byte
+	var err error
+	if len(args) == 0 {
+		log.Info("no argument, using default text")
+		data = []byte(defaultMarkdown)
+	} else {
+		filepath := args[0]
+		log.Info("reading...", "file", filepath)
+		data, err = ioutil.ReadFile(filepath)
+		if err != nil {
+			log.Error(err, "unable to read markdown")
+			return
+		}
 	}
 
 	commands := mdrc.NewCommands(log, data)
