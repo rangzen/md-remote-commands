@@ -24,6 +24,7 @@ func NewController(l logr.Logger, c *Commands, h *HTML) *Controller {
 	}
 }
 
+// HandleHTML handles the endpoint that exposes the HTML part.
 func (c *Controller) HandleHTML() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		c.logger.Info("serving", "path", r.URL.Path)
@@ -37,6 +38,7 @@ func (c *Controller) HandleHTML() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
+// HandleCommand handles the endpoint that exposes the commands.
 func (c *Controller) HandleCommand() func(http.ResponseWriter, *http.Request) {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		c.logger.Info("serving", "path", request.URL.Path)

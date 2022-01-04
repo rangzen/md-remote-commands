@@ -19,6 +19,7 @@ func NewServer(l logr.Logger, c *Controller) *Server {
 	}
 }
 
+// Serve runs the network connexion and the HTTP transport.
 func (s *Server) Serve(port string) {
 	const network = "tcp"
 	s.logger.Info("listening...", "network", network, "port", port)

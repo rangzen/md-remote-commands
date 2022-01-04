@@ -61,6 +61,7 @@ func NewHTML(l logr.Logger, data []byte) *HTML {
 	return h
 }
 
+// render renders the HTML code from the Markdown text.
 func (h *HTML) render(data []byte) {
 	opts := html.RendererOptions{
 		Flags:          html.CommonFlags,
@@ -81,6 +82,8 @@ func (h *HTML) render(data []byte) {
 	h.logger.Info("rendered", "size", len(h.html))
 }
 
+// renderShellCodeBlock injects the mdrc HTML code to deal with the commands
+// inside CodBlock with mdrc identifier (ast.CodeBlock.Info).
 func (h *HTML) renderShellCodeBlock() func(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
 	original := html.NewRenderer(html.RendererOptions{})
 	var cmdCount int
@@ -107,6 +110,7 @@ func (h *HTML) renderShellCodeBlock() func(w io.Writer, node ast.Node, entering 
 	}
 }
 
+// Rendered returns the final HTML rendered with mdrc injections.
 func (h *HTML) Rendered() string {
 	return h.html
 }

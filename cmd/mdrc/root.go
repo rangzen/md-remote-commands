@@ -28,6 +28,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// defaultMarkdown is the Markdown text used when mdrc is run without args.
 const defaultMarkdown = `# Welcome in [mdrc](https://github.com/rangzen/md-remote-commands)
 
 This is the default Markdown text because you run ` + "`mdrc`" + ` without argument.
@@ -91,6 +92,7 @@ func App(args []string) {
 	s.Serve(port)
 }
 
+// configureLogger configures the Zap implementation of logr.Logger.
 func configureLogger() logr.Logger {
 	var log logr.Logger
 

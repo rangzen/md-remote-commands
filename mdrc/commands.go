@@ -33,6 +33,7 @@ type Commands struct {
 	commands []Command
 }
 
+// NewCommands creates a Commands structure from extracted commands from data.
 func NewCommands(l logr.Logger, data []byte) *Commands {
 	f := &Commands{
 		logger:   l.WithName("commands"),
@@ -42,6 +43,7 @@ func NewCommands(l logr.Logger, data []byte) *Commands {
 	return f
 }
 
+// extract extracts commands from a Markdown text.
 func (f *Commands) extract(data []byte) {
 	opts := html.RendererOptions{
 		Flags:          html.CommonFlags,
@@ -52,6 +54,8 @@ func (f *Commands) extract(data []byte) {
 	f.logger.Info("extracted", "count", len(f.commands))
 }
 
+// extractShellCodeBlock is a special RenderNodeHook that intercepts commands
+// during "fake" rendering of the Markdown text.
 func (f *Commands) extractShellCodeBlock() func(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
 	return func(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
 		if _, ok := node.(*ast.CodeBlock); !ok {
@@ -65,10 +69,12 @@ func (f *Commands) extractShellCodeBlock() func(w io.Writer, node ast.Node, ente
 	}
 }
 
+// Valid returns true if the index i is a correct index for commands.
 func (f *Commands) Valid(i int) bool {
 	return len(f.commands) != 0 && i >= 0 && i < len(f.commands)
 }
 
+// Command returns the command at index i.
 func (f *Commands) Command(i int) Command {
 	return f.commands[i]
 }
