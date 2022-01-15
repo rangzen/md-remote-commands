@@ -18,9 +18,12 @@ package mdrc
 
 import (
 	"bytes"
+	"embed"
 	"fmt"
 	"io"
+	"log"
 	"strings"
+	"text/template"
 
 	"github.com/go-logr/logr"
 	"github.com/gomarkdown/markdown"
@@ -28,27 +31,12 @@ import (
 	"github.com/gomarkdown/markdown/html"
 )
 
-const (
-	mdrcCodeBlockIdentifier = "mdrc"
-)
+// content holds our static web server content.
+//go:embed template
+var content embed.FS
 
 const (
-	head = `
-<head>
-	<title>Markdown Remote Commands</title>
-</head>
-`
-	javascript = `
-<script type="text/javascript" >
-	function Run(num) {
-		fetch('/run/'+num).then(response =>{
-    		return response.text();
-		}).then(data =>{
-			document.getElementById('command-'+num).innerHTML=data;
-		})
-	}
-</script>
-`
+	mdrcCodeBlockIdentifier = "mdrc"
 )
 
 type HTML struct {
@@ -72,16 +60,24 @@ func (h *HTML) render(data []byte) {
 		RenderNodeHook: h.renderShellCodeBlock(),
 	}
 	renderer := html.NewRenderer(opts)
-	sb := strings.Builder{}
-	sb.WriteString("<html>")
-	sb.WriteString(head)
-	sb.WriteString("<body>")
-	sb.WriteString(javascript)
-	sb.Write(markdown.ToHTML(data, nil, renderer))
-	sb.WriteString(`
-</body>
-</html>
-`)
+	m := string(markdown.ToHTML(data, nil, renderer))
+
+	tmpl, err := template.ParseFS(content, "template/root.html")
+	if err != nil {
+		log.Fatalf("parsing template: %v\n", err)
+	}
+
+	sb := &strings.Builder{}
+	d := struct {
+		Markdown string
+	}{
+		Markdown: m,
+	}
+	err = tmpl.Execute(sb, d)
+	if err != nil {
+		log.Fatalf("executing template: %v\n", err)
+	}
+
 	h.html = sb.String()
 	h.logger.Info("rendered", "size", len(h.html))
 }
